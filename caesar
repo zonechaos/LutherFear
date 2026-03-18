@@ -130,59 +130,59 @@ local Themes = {
 },
 Ocean = {
 	Name = "Ocean",
-	Accent = Color3.fromRGB(95, 115, 145), -- ฟ้าหม่นจางมาก
+	Accent = Color3.fromRGB(85, 120, 170), -- เพิ่มน้ำเงินขึ้น
 
-	AcrylicMain = Color3.fromRGB(14, 17, 22), -- พื้นหลังหลัก (เกือบดำ)
-	AcrylicBorder = Color3.fromRGB(38, 44, 56),
+	AcrylicMain = Color3.fromRGB(12, 18, 28), -- ติดน้ำเงินมากขึ้น
+	AcrylicBorder = Color3.fromRGB(35, 50, 75),
 	AcrylicGradient = ColorSequence.new(
-		Color3.fromRGB(18, 22, 28),
-		Color3.fromRGB(26, 32, 40)
+		Color3.fromRGB(16, 24, 36),
+		Color3.fromRGB(24, 36, 52)
 	),
 	AcrylicNoise = 0.98,
 
-	TitleBarLine = Color3.fromRGB(50, 56, 70),
+	TitleBarLine = Color3.fromRGB(45, 65, 95),
 
-	Tab = Color3.fromRGB(30, 34, 42),
+	Tab = Color3.fromRGB(28, 40, 60),
 
-	Element = Color3.fromRGB(26, 30, 38), -- กล่อง setting
-	ElementBorder = Color3.fromRGB(16, 19, 24),
-	InElementBorder = Color3.fromRGB(42, 48, 60),
-	ElementTransparency = 0.91,
+	Element = Color3.fromRGB(24, 36, 55), -- กล่องออกน้ำเงินชัดขึ้น
+	ElementBorder = Color3.fromRGB(14, 20, 30),
+	InElementBorder = Color3.fromRGB(40, 60, 90),
+	ElementTransparency = 0.9,
 
-	ToggleSlider = Color3.fromRGB(75, 90, 115),
-	ToggleToggled = Color3.fromRGB(22, 26, 32),
+	ToggleSlider = Color3.fromRGB(70, 100, 150),
+	ToggleToggled = Color3.fromRGB(18, 26, 38),
 
-	SliderRail = Color3.fromRGB(75, 90, 115),
+	SliderRail = Color3.fromRGB(70, 100, 150),
 
-	DropdownFrame = Color3.fromRGB(42, 50, 65),
-	DropdownHolder = Color3.fromRGB(18, 22, 28),
-	DropdownBorder = Color3.fromRGB(28, 34, 44),
-	DropdownOption = Color3.fromRGB(70, 85, 110),
+	DropdownFrame = Color3.fromRGB(40, 60, 90),
+	DropdownHolder = Color3.fromRGB(16, 22, 32),
+	DropdownBorder = Color3.fromRGB(26, 36, 52),
+	DropdownOption = Color3.fromRGB(65, 95, 140),
 
-	Keybind = Color3.fromRGB(70, 85, 110),
+	Keybind = Color3.fromRGB(65, 95, 140),
 
-	Input = Color3.fromRGB(70, 85, 110),
-	InputFocused = Color3.fromRGB(14, 17, 22),
-	InputIndicator = Color3.fromRGB(105, 125, 155),
-	InputIndicatorFocus = Color3.fromRGB(135, 155, 185),
+	Input = Color3.fromRGB(65, 95, 140),
+	InputFocused = Color3.fromRGB(12, 18, 28),
+	InputIndicator = Color3.fromRGB(100, 135, 185),
+	InputIndicatorFocus = Color3.fromRGB(130, 165, 220),
 
-	Dialog = Color3.fromRGB(20, 24, 30),
-	DialogHolder = Color3.fromRGB(16, 20, 26),
-	DialogHolderLine = Color3.fromRGB(14, 17, 22),
+	Dialog = Color3.fromRGB(18, 26, 38),
+	DialogHolder = Color3.fromRGB(14, 22, 32),
+	DialogHolderLine = Color3.fromRGB(12, 18, 28),
 
-	DialogButton = Color3.fromRGB(26, 30, 38),
-	DialogButtonBorder = Color3.fromRGB(40, 46, 58),
+	DialogButton = Color3.fromRGB(22, 32, 48),
+	DialogButtonBorder = Color3.fromRGB(38, 55, 80),
 
-	DialogBorder = Color3.fromRGB(36, 42, 54),
+	DialogBorder = Color3.fromRGB(34, 50, 75),
 
-	DialogInput = Color3.fromRGB(24, 28, 36),
-	DialogInputLine = Color3.fromRGB(65, 80, 105),
+	DialogInput = Color3.fromRGB(22, 34, 50),
+	DialogInputLine = Color3.fromRGB(60, 90, 140),
 
-	Text = Color3.fromRGB(215, 220, 230), -- ขาวหม่น
-	SubText = Color3.fromRGB(135, 145, 160),
+	Text = Color3.fromRGB(220, 230, 245),
+	SubText = Color3.fromRGB(150, 170, 200),
 
-	Hover = Color3.fromRGB(48, 56, 70),
-	HoverChange = 0.03
+	Hover = Color3.fromRGB(45, 65, 95),
+	HoverChange = 0.035
 },
 	Emerald = {
 		Name = "Emerald",
