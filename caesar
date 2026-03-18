@@ -128,10 +128,10 @@ local Themes = {
 		Hover = Color3.fromRGB(170, 50, 70),
 		HoverChange = 0.05,
 	},
-	Cobalt = {
+		Cobalt = {
 	    Name = "Cobalt",
-	    Accent = Color3.fromRGB(0, 170, 255),  -- ฟ้าสว่างเหมือนเดิม
-	    AcrylicMain = Color3.fromRGB(24, 47, 79),  -- เปลี่ยนเป็นสีฟ้าเข้มตามรูป
+	    Accent = Color3.fromRGB(0, 170, 255),
+	    AcrylicMain = Color3.fromRGB(24, 47, 79),
 	    AcrylicBorder = Color3.fromRGB(24, 47, 79),
 	    AcrylicGradient = ColorSequence.new(
 	        Color3.fromRGB(24, 47, 79),
