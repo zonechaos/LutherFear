@@ -130,25 +130,25 @@ local Themes = {
 	},
 	Cobalt = {
     Name = "Cobalt",
-    Accent = Color3.fromRGB(77, 136, 255), -- สีฟ้าสว่างตรง Slider/Icon
-
-    -- พื้นหลังหลัก (เข้มและทึบ)
-    AcrylicMain = Color3.fromRGB(50, 87, 139),
-    AcrylicBorder = Color3.fromRGB(35, 38, 42), -- ขอบหน้าต่าง
-    AcrylicGradient = ColorSequence.new(Color3.fromRGB(18, 21, 26), Color3.fromRGB(13, 16, 20)),
-    AcrylicNoise = 0.95,
-    TitleBarLine = Color3.fromRGB(40, 43, 48),
-
-    -- ส่วนประกอบของเมนูและปุ่ม (Tabs & Elements)
-    Tab = Color3.fromRGB(30, 33, 38), -- สีปุ่มเมนูที่เลือก
-
+    Accent = Color3.fromRGB(0, 141, 255), -- สีฟ้าสว่างตรง Slider/Icon
+    
     -- *** ปรับเปลี่ยนตรงนี้ ***
-    -- บ็อกด้านใน (Element): ปรับให้สีสว่างขึ้นและโปร่งแสง
-    Element = Color3.fromRGB(40, 43, 48), -- เพิ่มความสว่างของสีฐาน
-    ElementBorder = Color3.fromRGB(50, 53, 58), -- ขอบบ็อกที่ชัดเจนขึ้น
-    InElementBorder = Color3.fromRGB(60, 63, 68),
-    ElementTransparency = 0.5, -- *** จุดสำคัญ *** ปรับให้โปร่งแสงมากขึ้นเพื่อให้ "อ่อน" ลง
-
+    -- พื้นหลังหลัก (ดึงสีเทาดำที่แม่นยำจากภาพมาใช้)
+    AcrylicMain = Color3.fromRGB(13, 15, 18), 
+    AcrylicBorder = Color3.fromRGB(25, 28, 32), -- ขอบหน้าต่าง
+    AcrylicGradient = ColorSequence.new(Color3.fromRGB(16, 18, 22), Color3.fromRGB(10, 12, 14)), -- ไล่ระดับให้สมจริง
+    AcrylicNoise = 0.95,
+    TitleBarLine = Color3.fromRGB(30, 33, 38), -- เส้นใต้ Title Bar
+    
+    -- *** ปรับเปลี่ยนตรงนี้ ***
+    -- ทั้ง "บ็อกตรงนี่" และ "ปุ่มConfigurations" ใช้สีเดียวกัน (Tab & Element)
+    -- ดึงสีเทาอ่อนและโปร่งแสงที่แม่นยำจากภาพมาใช้
+    Tab = Color3.fromRGB(30, 33, 38), -- สีปุ่มเมนูที่เลือก (ปรับให้เหมือน Element)
+    Element = Color3.fromRGB(30, 33, 38), -- สีกล่อง Theme Configuration
+    ElementBorder = Color3.fromRGB(40, 43, 48), -- ขอบบ็อก
+    InElementBorder = Color3.fromRGB(50, 53, 58),
+    ElementTransparency = 0.5, -- *** จุดสำคัญ *** ปรับให้โปร่งแสงและอ่อนลง
+    
     -- ส่วนของ Interactive (Sliders, Toggles, Dropdowns)
     ToggleSlider = Color3.fromRGB(110, 110, 120),
     ToggleToggled = Color3.fromRGB(0, 141, 255),
@@ -157,14 +157,14 @@ local Themes = {
     DropdownHolder = Color3.fromRGB(28, 32, 37),
     DropdownBorder = Color3.fromRGB(50, 53, 58),
     DropdownOption = Color3.fromRGB(43, 47, 52),
-
+    
     -- Inputs และ Keybinds
     Keybind = Color3.fromRGB(43, 47, 52),
     Input = Color3.fromRGB(38, 42, 47),
     InputFocused = Color3.fromRGB(28, 32, 37),
     InputIndicator = Color3.fromRGB(70, 73, 78),
     InputIndicatorFocus = Color3.fromRGB(0, 141, 255),
-
+    
     -- Dialogs (หน้าต่างแจ้งเตือน)
     Dialog = Color3.fromRGB(28, 32, 37),
     DialogHolder = Color3.fromRGB(23, 27, 32),
@@ -174,11 +174,11 @@ local Themes = {
     DialogBorder = Color3.fromRGB(50, 53, 58),
     DialogInput = Color3.fromRGB(33, 37, 42),
     DialogInputLine = Color3.fromRGB(0, 141, 255),
-
+    
     -- ตัวหนังสือ
     Text = Color3.fromRGB(255, 255, 255), -- สีขาวสะอาด
     SubText = Color3.fromRGB(160, 165, 170), -- สีเทาสำหรับคำอธิบาย
-
+    
     Hover = Color3.fromRGB(55, 58, 65), -- ปรับ Hover ให้สว่างขึ้น
     HoverChange = 0.05
 },
