@@ -132,13 +132,12 @@ local Themes = {
     Name = "Cobalt",
     Accent = Color3.fromRGB(110, 153, 202), 
     
-    -- Main Background: สีพื้นหลัก
+    -- Main Background
     AcrylicMain = Color3.fromRGB(20, 26, 35), 
     AcrylicBorder = Color3.fromRGB(35, 45, 55),
     AcrylicGradient = ColorSequence.new(Color3.fromRGB(20, 26, 35), Color3.fromRGB(20, 26, 35)),
-    AcrylicNoise = 0.94, 
+    AcrylicNoise = 0, 
     
-    -- UI Elements: ปรับให้เข้มขึ้นกว่าเดิมแต่ไม่เท่า Main และไม่มีการเน้นขอบสว่าง
     TitleBarLine = Color3.fromRGB(30, 40, 52),
     
     -- Tab (เมนูซ้าย): ปรับให้เข้มและกลืนไปกับพื้นหลังมากขึ้น
