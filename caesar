@@ -130,28 +130,26 @@ local Themes = {
 	},
 	Cobalt = {
     Name = "Cobalt",
-    -- Accent Color: สีฟ้า Cobalt หม่นตามในรูป (Slider และ Icon)
     Accent = Color3.fromRGB(110, 153, 202), 
     
-    -- Main Background: สี Slate-Blue เข้มที่เรียบเนียนที่สุด
+    -- Main Background
     AcrylicMain = Color3.fromRGB(20, 26, 35), 
     AcrylicBorder = Color3.fromRGB(35, 45, 55),
-    
-    -- ป้องกันภาพแตก (Color Banding) โดยใช้สี Solid ชุดเดียวกัน
     AcrylicGradient = ColorSequence.new(Color3.fromRGB(20, 26, 35), Color3.fromRGB(20, 26, 35)),
-    
-    -- แก้ปัญหาภาพแตก: ปิด Noise เป็น 0 สนิท
     AcrylicNoise = 0, 
     
     -- UI Elements
     TitleBarLine = Color3.fromRGB(30, 40, 52),
-    Tab = Color3.fromRGB(25, 33, 45), 
-    Element = Color3.fromRGB(28, 36, 48), 
-    ElementBorder = Color3.fromRGB(40, 50, 65),
-    InElementBorder = Color3.fromRGB(32, 40, 55),
     
-    -- ความโปร่งใสที่พอดีเพื่อให้สีนิ่งและไม่เกิดจุดเม็ดสี (Artifacts)
-    ElementTransparency = 0.6, 
+    -- Tab (ส่วนเมนูด้านซ้าย): ปรับให้เข้มขึ้นกว่าเดิม แต่ยังสว่างกว่า Main นิดเดียวเพื่อให้เห็นขอบเขต
+    Tab = Color3.fromRGB(23, 30, 41), 
+    
+    -- Element (ส่วนบล็อกเนื้อหา): ปรับให้เข้มขึ้นตามที่ต้องการ (อยู่ระหว่าง Main กับ Tab เดิม)
+    Element = Color3.fromRGB(25, 33, 45), 
+    
+    ElementBorder = Color3.fromRGB(45, 55, 75), -- เพิ่มความสว่างขอบให้ดูคมขึ้น
+    InElementBorder = Color3.fromRGB(35, 45, 60),
+    ElementTransparency = 0, 
     
     -- Controls
     ToggleSlider = Color3.fromRGB(110, 153, 202),
@@ -161,7 +159,7 @@ local Themes = {
     -- Dropdowns
     DropdownFrame = Color3.fromRGB(35, 45, 60),
     DropdownHolder = Color3.fromRGB(22, 30, 42),
-    DropdownBorder = Color3.fromRGB(40, 50, 65),
+    DropdownBorder = Color3.fromRGB(45, 60, 80),
     DropdownOption = Color3.fromRGB(110, 153, 202),
     
     -- Inputs & Keybinds
@@ -175,15 +173,15 @@ local Themes = {
     Dialog = Color3.fromRGB(20, 28, 38),
     DialogHolder = Color3.fromRGB(18, 25, 35),
     DialogHolderLine = Color3.fromRGB(30, 40, 55),
-    DialogButton = Color3.fromRGB(28, 36, 48),
-    DialogButtonBorder = Color3.fromRGB(40, 50, 65),
+    DialogButton = Color3.fromRGB(25, 33, 45),
+    DialogButtonBorder = Color3.fromRGB(45, 60, 80),
     DialogBorder = Color3.fromRGB(35, 45, 55),
-    DialogInput = Color3.fromRGB(28, 36, 48),
+    DialogInput = Color3.fromRGB(25, 33, 45),
     DialogInputLine = Color3.fromRGB(110, 153, 202),
     
-    -- Typography (อ้างอิงจากรูปเป๊ะๆ)
-    Text = Color3.fromRGB(225, 230, 240), -- ขาวนวล
-    SubText = Color3.fromRGB(140, 150, 165), -- เทาอมน้ำเงินหม่น
+    -- Typography
+    Text = Color3.fromRGB(225, 230, 240),
+    SubText = Color3.fromRGB(140, 150, 165),
     
     -- Interaction
     Hover = Color3.fromRGB(45, 55, 75),
