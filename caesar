@@ -145,7 +145,7 @@ local Themes = {
 	    AcrylicGradient = ColorSequence.new(Color3.fromRGB(20, 26, 35), Color3.fromRGB(20, 26, 35)),
 	    
 	    -- AcrylicNoise: ปิด Noise เป็น 0 เพื่อแก้ภาพแตก
-	    AcrylicNoise = 0.94, 
+	    AcrylicNoise = 0, 
 	    
 	    -- --- [ ปรับเพิ่ม: เส้นขอบ Element --- ]
 	    -- Element: พื้นหลังของ Elements (เช่น กรอบ Configurations)
