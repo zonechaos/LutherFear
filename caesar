@@ -141,7 +141,7 @@ local Themes = {
 	    AcrylicGradient = ColorSequence.new(Color3.fromRGB(20, 26, 35), Color3.fromRGB(20, 26, 35)),
 	    
 	    -- แก้ปัญหาภาพแตก: ปิด Noise เป็น 0 สนิท
-	    AcrylicNoise = 0, 
+	    AcrylicNoise = 0.94, 
 	    
 	    -- UI Elements
 	    TitleBarLine = Color3.fromRGB(30, 40, 52),
