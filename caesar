@@ -129,42 +129,28 @@ local Themes = {
 		HoverChange = 0.05,
 	},
 	Cobalt = {
-	    Name = "Cobalt", -- ชื่อธีมในเมนู
-	    -- Accent Color: สีฟ้า Cobalt หม่นที่ตรงตามรูป
+	    Name = "Cobalt",
+	    -- Accent Color: สีฟ้า Cobalt หม่นตามในรูป (Slider และ Icon)
 	    Accent = Color3.fromRGB(110, 153, 202), 
 	    
-	    -- Main Background: สีพื้น Slate-Blue เข้ม เรียบเนียน
+	    -- Main Background: สี Slate-Blue เข้มที่เรียบเนียนที่สุด
 	    AcrylicMain = Color3.fromRGB(20, 26, 35), 
+	    AcrylicBorder = Color3.fromRGB(35, 45, 55),
 	    
-	    -- --- [ ปรับเพิ่ม: เส้นขอบหลัก --- ]
-	    -- AcrylicBorder: เพิ่มความสว่างเพื่อให้เส้นขอบรอบนอกดูคมชัดขึ้น เหมือนขอบหน้าต่างในรูป
-	    AcrylicBorder = Color3.fromRGB(50, 65, 80), 
-	    -- ---------------------------------
-	    
-	    -- AcrylicGradient: ใช้สี Solid ชุดเดียวกันเพื่อความเนียน
+	    -- ป้องกันภาพแตก (Color Banding) โดยใช้สี Solid ชุดเดียวกัน
 	    AcrylicGradient = ColorSequence.new(Color3.fromRGB(20, 26, 35), Color3.fromRGB(20, 26, 35)),
 	    
-	    -- AcrylicNoise: ปิด Noise เป็น 0 เพื่อแก้ภาพแตก
+	    -- แก้ปัญหาภาพแตก: ปิด Noise เป็น 0 สนิท
 	    AcrylicNoise = 0, 
 	    
-	    -- --- [ ปรับเพิ่ม: เส้นขอบ Element --- ]
-	    -- Element: พื้นหลังของ Elements (เช่น กรอบ Configurations)
-	    Element = Color3.fromRGB(28, 36, 48), 
-	    
-	    -- ElementBorder: ปรับเพิ่มความสว่าง (Highlight) เพื่อเน้นขอบ Element ที่เลือกอยู่ (Configurations) 
-	    ElementBorder = Color3.fromRGB(60, 80, 100), -- [ ปรับเพิ่มความสว่าง: เน้นขอบหลัก ]
-	
-	    -- InElementBorder: เส้นขอบด้านใน (เช่น รอบ Dropdown "Select Theme") ทำให้ดูมีความลึกขึ้น
-	    InElementBorder = Color3.fromRGB(45, 60, 75), -- [ ปรับเพิ่มความสว่าง: เน้นขอบด้านใน ]
-	    -- ---------------------------------------
-	    
-	    -- Elements
-	    TitleBarLine = Color3.fromRGB(35, 45, 60), -- [ ปรับเพิ่มความสว่าง: เส้นแบ่ง Title Bar ]
-	    
-	    -- Tab: พื้นหลังของ Tab ด้านซ้าย (ทำให้ดูแตกต่างเล็กน้อย)
+	    -- UI Elements
+	    TitleBarLine = Color3.fromRGB(30, 40, 52),
 	    Tab = Color3.fromRGB(25, 33, 45), 
+	    Element = Color3.fromRGB(28, 36, 48), 
+	    ElementBorder = Color3.fromRGB(40, 50, 65),
+	    InElementBorder = Color3.fromRGB(32, 40, 55),
 	    
-	    -- ElementTransparency: ความโปร่งใสที่พอดี
+	    -- ความโปร่งใสที่พอดีเพื่อให้สีนิ่งและไม่เกิดจุดเม็ดสี (Artifacts)
 	    ElementTransparency = 0.6, 
 	    
 	    -- Controls
@@ -175,7 +161,7 @@ local Themes = {
 	    -- Dropdowns
 	    DropdownFrame = Color3.fromRGB(35, 45, 60),
 	    DropdownHolder = Color3.fromRGB(22, 30, 42),
-	    DropdownBorder = Color3.fromRGB(45, 60, 75), -- [ ปรับเพิ่มความสว่าง: เน้นขอบ Dropdown ]
+	    DropdownBorder = Color3.fromRGB(40, 50, 65),
 	    DropdownOption = Color3.fromRGB(110, 153, 202),
 	    
 	    -- Inputs & Keybinds
@@ -188,21 +174,21 @@ local Themes = {
 	    -- Dialogs
 	    Dialog = Color3.fromRGB(20, 28, 38),
 	    DialogHolder = Color3.fromRGB(18, 25, 35),
-	    DialogHolderLine = Color3.fromRGB(35, 45, 60), -- [ ปรับเพิ่มความสว่าง ]
+	    DialogHolderLine = Color3.fromRGB(30, 40, 55),
 	    DialogButton = Color3.fromRGB(28, 36, 48),
-	    DialogButtonBorder = Color3.fromRGB(45, 60, 75), -- [ ปรับเพิ่มความสว่าง ]
+	    DialogButtonBorder = Color3.fromRGB(40, 50, 65),
 	    DialogBorder = Color3.fromRGB(35, 45, 55),
 	    DialogInput = Color3.fromRGB(28, 36, 48),
 	    DialogInputLine = Color3.fromRGB(110, 153, 202),
 	    
-	    -- Typography
+	    -- Typography (อ้างอิงจากรูปเป๊ะๆ)
 	    Text = Color3.fromRGB(225, 230, 240), -- ขาวนวล
 	    SubText = Color3.fromRGB(140, 150, 165), -- เทาอมน้ำเงินหม่น
 	    
 	    -- Interaction
 	    Hover = Color3.fromRGB(45, 55, 75),
 	    HoverChange = 0.05
-	},
+},
 	Emerald = {
 		Name = "Emerald",
 		Accent = Color3.fromRGB(46, 204, 113),
