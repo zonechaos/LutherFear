@@ -132,23 +132,22 @@ local Themes = {
     Name = "Cobalt",
     Accent = Color3.fromRGB(110, 153, 202), 
     
-    -- Main Background
+    -- Main Background: สีพื้นหลัก
     AcrylicMain = Color3.fromRGB(20, 26, 35), 
     AcrylicBorder = Color3.fromRGB(35, 45, 55),
     AcrylicGradient = ColorSequence.new(Color3.fromRGB(20, 26, 35), Color3.fromRGB(20, 26, 35)),
     AcrylicNoise = 0, 
     
-    -- UI Elements
+    -- UI Elements: ปรับให้เข้มขึ้นกว่าเดิมแต่ไม่เท่า Main และไม่มีการเน้นขอบสว่าง
     TitleBarLine = Color3.fromRGB(30, 40, 52),
     
-    -- Tab (ส่วนเมนูด้านซ้าย): ปรับให้เข้มขึ้นกว่าเดิม แต่ยังสว่างกว่า Main นิดเดียวเพื่อให้เห็นขอบเขต
+    -- Tab (เมนูซ้าย): ปรับให้เข้มและกลืนไปกับพื้นหลังมากขึ้น
     Tab = Color3.fromRGB(23, 30, 41), 
     
-    -- Element (ส่วนบล็อกเนื้อหา): ปรับให้เข้มขึ้นตามที่ต้องการ (อยู่ระหว่าง Main กับ Tab เดิม)
+    -- Element (บล็อกเนื้อหา): ปรับสีให้เข้มขึ้น และลดความสว่างของขอบ (Border) ลงไม่ให้เด่น
     Element = Color3.fromRGB(25, 33, 45), 
-    
-    ElementBorder = Color3.fromRGB(45, 55, 75), -- เพิ่มความสว่างขอบให้ดูคมขึ้น
-    InElementBorder = Color3.fromRGB(35, 45, 60),
+    ElementBorder = Color3.fromRGB(32, 40, 55), -- ปรับขอบให้มืดลง ไม่เน้นสี
+    InElementBorder = Color3.fromRGB(28, 36, 50),
     ElementTransparency = 0, 
     
     -- Controls
@@ -159,7 +158,7 @@ local Themes = {
     -- Dropdowns
     DropdownFrame = Color3.fromRGB(35, 45, 60),
     DropdownHolder = Color3.fromRGB(22, 30, 42),
-    DropdownBorder = Color3.fromRGB(45, 60, 80),
+    DropdownBorder = Color3.fromRGB(32, 40, 55), -- ลดความสว่างขอบ
     DropdownOption = Color3.fromRGB(110, 153, 202),
     
     -- Inputs & Keybinds
@@ -174,7 +173,7 @@ local Themes = {
     DialogHolder = Color3.fromRGB(18, 25, 35),
     DialogHolderLine = Color3.fromRGB(30, 40, 55),
     DialogButton = Color3.fromRGB(25, 33, 45),
-    DialogButtonBorder = Color3.fromRGB(45, 60, 80),
+    DialogButtonBorder = Color3.fromRGB(32, 40, 55),
     DialogBorder = Color3.fromRGB(35, 45, 55),
     DialogInput = Color3.fromRGB(25, 33, 45),
     DialogInputLine = Color3.fromRGB(110, 153, 202),
