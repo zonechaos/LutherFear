@@ -1,0 +1,996 @@
+-- DeityFluent UI Library
+-- Modern UI with Fluent-like system and Deity aesthetics
+
+local DeityFluent = {}
+DeityFluent.__index = DeityFluent
+
+-- Services
+local Players = game:GetService("Players")
+local UserInputService = game:GetService("UserInputService")
+local TweenService = game:GetService("TweenService")
+local RunService = game:GetService("RunService")
+local CoreGui = game:GetService("CoreGui")
+local HttpService = game:GetService("HttpService")
+local TextService = game:GetService("TextService")
+
+local LocalPlayer = Players.LocalPlayer
+local Mouse = LocalPlayer:GetMouse()
+
+-- Default settings
+DeityFluent.Settings = {
+    Keybind = Enum.KeyCode.RightControl,
+    AnimationSpeed = 0.25,
+    Transparency = 0.85,
+    IsMobile = UserInputService.TouchEnabled and not UserInputService.MouseEnabled
+}
+
+-- Deity-inspired themes
+DeityFluent.Themes = {
+    -- Main Deity Theme
+    Deity = {
+        Accent = Color3.fromRGB(157, 78, 221),      -- Purple accent
+        Background = Color3.fromRGB(15, 15, 20),    -- Dark background
+        Surface = Color3.fromRGB(25, 25, 32),       -- Surface color
+        Text = Color3.fromRGB(255, 255, 255),       -- White text
+        TextSecondary = Color3.fromRGB(160, 160, 180),
+        Border = Color3.fromRGB(45, 45, 55),
+        Gradient = {
+            Start = Color3.fromRGB(25, 25, 32),
+            End = Color3.fromRGB(35, 35, 45)
+        }
+    },
+    -- Fluent Default Theme
+    Fluent = {
+        Accent = Color3.fromRGB(0, 120, 215),
+        Background = Color3.fromRGB(32, 32, 32),
+        Surface = Color3.fromRGB(40, 40, 40),
+        Text = Color3.fromRGB(255, 255, 255),
+        TextSecondary = Color3.fromRGB(180, 180, 180),
+        Border = Color3.fromRGB(60, 60, 60),
+        Gradient = {
+            Start = Color3.fromRGB(40, 40, 40),
+            End = Color3.fromRGB(48, 48, 48)
+        }
+    },
+    -- Dark Academia
+    Academia = {
+        Accent = Color3.fromRGB(200, 180, 140),
+        Background = Color3.fromRGB(28, 25, 23),
+        Surface = Color3.fromRGB(38, 35, 33),
+        Text = Color3.fromRGB(235, 225, 210),
+        TextSecondary = Color3.fromRGB(180, 170, 155),
+        Border = Color3.fromRGB(58, 55, 53),
+        Gradient = {
+            Start = Color3.fromRGB(38, 35, 33),
+            End = Color3.fromRGB(48, 45, 43)
+        }
+    },
+    -- Cyberpunk
+    Cyber = {
+        Accent = Color3.fromRGB(0, 255, 255),
+        Background = Color3.fromRGB(10, 8, 20),
+        Surface = Color3.fromRGB(20, 18, 30),
+        Text = Color3.fromRGB(0, 255, 255),
+        TextSecondary = Color3.fromRGB(100, 255, 200),
+        Border = Color3.fromRGB(0, 200, 200),
+        Gradient = {
+            Start = Color3.fromRGB(20, 18, 30),
+            End = Color3.fromRGB(30, 28, 40)
+        }
+    }
+}
+
+-- Current theme
+DeityFluent.CurrentTheme = DeityFluent.Themes.Deity
+
+-- Storage
+DeityFluent.Windows = {}
+DeityFluent.Connections = {}
+DeityFluent.Flags = {}
+
+-- Utility functions
+function DeityFluent:Create(className, properties, children)
+    local obj = Instance.new(className)
+    for prop, value in pairs(properties or {}) do
+        obj[prop] = value
+    end
+    for _, child in ipairs(children or {}) do
+        child.Parent = obj
+    end
+    return obj
+end
+
+function DeityFluent:Connect(signal, callback)
+    local conn
+    conn = signal:Connect(function(...)
+        local success, err = pcall(callback, ...)
+        if not success then
+            warn("[DeityFluent] Error in connection:", err)
+        end
+    end)
+    table.insert(self.Connections, conn)
+    return conn
+end
+
+function DeityFluent:Tween(object, properties, duration, style, direction)
+    if not self.Settings.AnimationSpeed then return end
+    local tweenInfo = TweenInfo.new(duration or self.Settings.AnimationSpeed, 
+        style or Enum.EasingStyle.Quad, 
+        direction or Enum.EasingDirection.Out)
+    local tween = TweenService:Create(object, tweenInfo, properties)
+    tween:Play()
+    return tween
+end
+
+function DeityFluent:GetIcon(iconName)
+    -- You can add your icon assets here
+    local icons = {
+        home = "rbxassetid://6031092379",
+        settings = "rbxassetid://6031087587",
+        user = "rbxassetid://6031091788",
+        cog = "rbxassetid://6031087587",
+        "rbxassetid://6031092379" -- default
+    }
+    return icons[iconName] or icons[#icons]
+end
+
+-- Create main window
+function DeityFluent:Window(options)
+    options = options or {}
+    
+    local window = {
+        Title = options.title or "DeityFluent",
+        Subtitle = options.subtitle or "",
+        Size = options.size or (self.Settings.IsMobile and UDim2.fromOffset(400, 600) or UDim2.fromOffset(580, 500)),
+        Theme = options.theme or "Deity",
+        Keybind = options.keybind or self.Settings.Keybind,
+        Visible = true,
+        Maximized = false,
+        Tabs = {},
+        ActiveTab = nil,
+        Elements = {}
+    }
+    
+    -- Apply theme
+    if DeityFluent.Themes[window.Theme] then
+        DeityFluent.CurrentTheme = DeityFluent.Themes[window.Theme]
+    end
+    
+    -- Create GUI
+    local screenGui = self:Create("ScreenGui", {
+        Name = "DeityFluent",
+        Parent = CoreGui,
+        ZIndexBehavior = Enum.ZIndexBehavior.Sibling,
+        ResetOnSpawn = false
+    })
+    
+    -- Main frame
+    local mainFrame = self:Create("Frame", {
+        Name = "MainFrame",
+        Parent = screenGui,
+        Size = window.Size,
+        Position = UDim2.new(0.5, 0, 0.5, 0),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundTransparency = 1,
+        Visible = true
+    })
+    
+    -- Background with blur effect
+    local blur = self:Create("BlurEffect", {
+        Parent = screenGui,
+        Size = 16,
+        Enabled = false
+    })
+    
+    local background = self:Create("Frame", {
+        Name = "Background",
+        Parent = mainFrame,
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundColor3 = DeityFluent.CurrentTheme.Background,
+        BackgroundTransparency = self.Settings.Transparency,
+        BorderSizePixel = 0
+    })
+    
+    self:Create("UICorner", {CornerRadius = UDim.new(0, 12)}, {Parent = background})
+    
+    -- Shadow effect
+    local shadow = self:Create("ImageLabel", {
+        Name = "Shadow",
+        Parent = mainFrame,
+        Image = "rbxassetid://6014261993",
+        ImageColor3 = Color3.fromRGB(0, 0, 0),
+        ImageTransparency = 0.7,
+        ScaleType = Enum.ScaleType.Slice,
+        SliceCenter = Rect.new(10, 10, 10, 10),
+        Size = UDim2.new(1, 40, 1, 40),
+        Position = UDim2.new(0.5, -20, 0.5, -20),
+        AnchorPoint = Vector2.new(0.5, 0.5),
+        BackgroundTransparency = 1,
+        ZIndex = 0
+    })
+    
+    -- Title bar
+    local titleBar = self:Create("Frame", {
+        Name = "TitleBar",
+        Parent = mainFrame,
+        Size = UDim2.new(1, 0, 0, 48),
+        BackgroundTransparency = 1
+    })
+    
+    -- Title text
+    local titleText = self:Create("TextLabel", {
+        Name = "Title",
+        Parent = titleBar,
+        Text = window.Title,
+        TextColor3 = DeityFluent.CurrentTheme.Text,
+        TextSize = 18,
+        Font = Enum.Font.GothamBold,
+        BackgroundTransparency = 1,
+        Position = UDim2.new(0, 16, 0.5, 0),
+        AnchorPoint = Vector2.new(0, 0.5),
+        Size = UDim2.new(0, 200, 1, 0),
+        TextXAlignment = Enum.TextXAlignment.Left
+    })
+    
+    -- Subtitle
+    if window.Subtitle ~= "" then
+        local subtitle = self:Create("TextLabel", {
+            Parent = titleBar,
+            Text = window.Subtitle,
+            TextColor3 = DeityFluent.CurrentTheme.TextSecondary,
+            TextSize = 12,
+            Font = Enum.Font.Gotham,
+            BackgroundTransparency = 1,
+            Position = UDim2.new(0, 16, 0.5, 12),
+            AnchorPoint = Vector2.new(0, 0.5),
+            Size = UDim2.new(0, 200, 1, 0),
+            TextXAlignment = Enum.TextXAlignment.Left
+        })
+    end
+    
+    -- Control buttons
+    local buttonSize = UDim2.new(0, 32, 1, -16)
+    local buttonPos = UDim2.new(1, -110, 0, 8)
+    
+    local closeBtn = self:Create("TextButton", {
+        Name = "CloseButton",
+        Parent = titleBar,
+        Text = "",
+        Size = buttonSize,
+        Position = UDim2.new(1, -38, 0, 8),
+        BackgroundColor3 = Color3.fromRGB(255, 70, 70),
+        BackgroundTransparency = 0.8,
+        AutoButtonColor = false
+    }, {
+        self:Create("UICorner", {CornerRadius = UDim.new(0, 6)})
+    })
+    
+    local maxBtn = self:Create("TextButton", {
+        Name = "MaximizeButton",
+        Parent = titleBar,
+        Text = "",
+        Size = buttonSize,
+        Position = UDim2.new(1, -74, 0, 8),
+        BackgroundColor3 = Color3.fromRGB(255, 180, 70),
+        BackgroundTransparency = 0.8,
+        AutoButtonColor = false
+    }, {
+        self:Create("UICorner", {CornerRadius = UDim.new(0, 6)})
+    })
+    
+    local minBtn = self:Create("TextButton", {
+        Name = "MinimizeButton",
+        Parent = titleBar,
+        Text = "",
+        Size = buttonSize,
+        Position = UDim2.new(1, -110, 0, 8),
+        BackgroundColor3 = Color3.fromRGB(70, 180, 70),
+        BackgroundTransparency = 0.8,
+        AutoButtonColor = false
+    }, {
+        self:Create("UICorner", {CornerRadius = UDim.new(0, 6)})
+    })
+    
+    -- Sidebar
+    local sidebar = self:Create("Frame", {
+        Name = "Sidebar",
+        Parent = mainFrame,
+        Size = UDim2.new(0, 180, 1, -48),
+        Position = UDim2.new(0, 0, 0, 48),
+        BackgroundColor3 = DeityFluent.CurrentTheme.Surface,
+        BackgroundTransparency = 0.3,
+        BorderSizePixel = 0
+    }, {
+        self:Create("UICorner", {CornerRadius = UDim.new(0, 0)})
+    })
+    
+    -- Tab container
+    local tabContainer = self:Create("ScrollingFrame", {
+        Name = "TabContainer",
+        Parent = sidebar,
+        Size = UDim2.new(1, 0, 1, 0),
+        BackgroundTransparency = 1,
+        CanvasSize = UDim2.new(0, 0, 0, 0),
+        ScrollBarThickness = 0
+    }, {
+        self:Create("UIListLayout", {
+            Padding = UDim.new(0, 4),
+            SortOrder = Enum.SortOrder.LayoutOrder
+        })
+    })
+    
+    -- Content area
+    local contentArea = self:Create("ScrollingFrame", {
+        Name = "ContentArea",
+        Parent = mainFrame,
+        Size = UDim2.new(1, -180, 1, -48),
+        Position = UDim2.new(0, 180, 0, 48),
+        BackgroundTransparency = 1,
+        CanvasSize = UDim2.new(0, 0, 0, 0),
+        ScrollBarThickness = 4,
+        ScrollBarImageTransparency = 0.5
+    }, {
+        self:Create("UIPadding", {
+            PaddingLeft = UDim.new(0, 16),
+            PaddingRight = UDim.new(0, 16),
+            PaddingTop = UDim.new(0, 12),
+            PaddingBottom = UDim.new(0, 12)
+        }),
+        self:Create("UIListLayout", {
+            Padding = UDim.new(0, 8),
+            SortOrder = Enum.SortOrder.LayoutOrder
+        })
+    })
+    
+    -- Window controls
+    local function toggleWindow()
+        window.Visible = not window.Visible
+        mainFrame.Visible = window.Visible
+    end
+    
+    local function maximizeWindow()
+        window.Maximized = not window.Maximized
+        if window.Maximized then
+            self:Tween(mainFrame, {Size = UDim2.new(1, 0, 1, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}, 0.3)
+        else
+            self:Tween(mainFrame, {Size = window.Size, Position = UDim2.new(0.5, 0, 0.5, 0)}, 0.3)
+        end
+    end
+    
+    self:Connect(minBtn.Activated, toggleWindow)
+    self:Connect(maxBtn.Activated, maximizeWindow)
+    self:Connect(closeBtn.Activated, function()
+        screenGui:Destroy()
+        for _, conn in ipairs(self.Connections) do
+            conn:Disconnect()
+        end
+    end)
+    
+    -- Dragging
+    local dragging = false
+    local dragStart, startPos
+    
+    self:Connect(titleBar.InputBegan, function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = true
+            dragStart = input.Position
+            startPos = mainFrame.Position
+        end
+    end)
+    
+    self:Connect(UserInputService.InputChanged, function(input)
+        if dragging and (input.UserInputType == Enum.UserInputType.MouseMovement) then
+            local delta = input.Position - dragStart
+            mainFrame.Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, 
+                                           startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+        end
+    end)
+    
+    self:Connect(UserInputService.InputEnded, function(input)
+        if input.UserInputType == Enum.UserInputType.MouseButton1 then
+            dragging = false
+        end
+    end)
+    
+    -- Keybind
+    self:Connect(UserInputService.InputBegan, function(input, gameProcessed)
+        if not gameProcessed and input.KeyCode == window.Keybind then
+            toggleWindow()
+        end
+    end)
+    
+    -- Tab system
+    function window:AddTab(options)
+        options = options or {}
+        
+        local tab = {
+            Title = options.title or "Tab",
+            Icon = options.icon,
+            Objects = {},
+            Container = self:Create("ScrollingFrame", {
+                Name = options.title,
+                Parent = contentArea,
+                Size = UDim2.new(1, 0, 1, 0),
+                BackgroundTransparency = 1,
+                CanvasSize = UDim2.new(0, 0, 0, 0),
+                ScrollBarThickness = 4,
+                ScrollBarImageTransparency = 0.5,
+                Visible = false
+            }, {
+                self:Create("UIListLayout", {
+                    Padding = UDim.new(0, 8),
+                    SortOrder = Enum.SortOrder.LayoutOrder
+                }),
+                self:Create("UIPadding", {
+                    PaddingBottom = UDim.new(0, 12)
+                })
+            })
+        }
+        
+        -- Tab button
+        local tabBtn = self:Create("TextButton", {
+            Name = options.title,
+            Parent = tabContainer,
+            Text = "",
+            Size = UDim2.new(1, -16, 0, 36),
+            Position = UDim2.new(0, 8, 0, 0),
+            BackgroundColor3 = DeityFluent.CurrentTheme.Surface,
+            BackgroundTransparency = 1,
+            AutoButtonColor = false
+        }, {
+            self:Create("UICorner", {CornerRadius = UDim.new(0, 8)})
+        })
+        
+        -- Tab icon
+        if options.icon then
+            local icon = self:Create("ImageLabel", {
+                Parent = tabBtn,
+                Image = self:GetIcon(options.icon),
+                ImageColor3 = DeityFluent.CurrentTheme.Text,
+                Size = UDim2.new(0, 20, 0, 20),
+                Position = UDim2.new(0, 12, 0.5, 0),
+                AnchorPoint = Vector2.new(0, 0.5),
+                BackgroundTransparency = 1
+            })
+        end
+        
+        -- Tab text
+        local tabText = self:Create("TextLabel", {
+            Parent = tabBtn,
+            Text = options.title,
+            TextColor3 = DeityFluent.CurrentTheme.TextSecondary,
+            TextSize = 13,
+            Font = Enum.Font.Gotham,
+            Position = UDim2.new(0, options.icon and 40 or 16, 0.5, 0),
+            AnchorPoint = Vector2.new(0, 0.5),
+            Size = UDim2.new(1, -40, 1, 0),
+            BackgroundTransparency = 1,
+            TextXAlignment = Enum.TextXAlignment.Left
+        })
+        
+        function tab:Select()
+            if window.ActiveTab then
+                window.ActiveTab.Container.Visible = false
+                window.ActiveTab.Button.BackgroundTransparency = 1
+                window.ActiveTab.Text.TextColor3 = DeityFluent.CurrentTheme.TextSecondary
+            end
+            
+            tab.Container.Visible = true
+            tabBtn.BackgroundTransparency = 0.9
+            tabText.TextColor3 = DeityFluent.CurrentTheme.Accent
+            window.ActiveTab = tab
+        end
+        
+        tab.Button = tabBtn
+        tab.Text = tabText
+        table.insert(window.Tabs, tab)
+        
+        if #window.Tabs == 1 then
+            tab:Select()
+        end
+        
+        self:Connect(tabBtn.Activated, function()
+            tab:Select()
+        end)
+        
+        -- Element creation methods
+        function tab:AddButton(options)
+            options = options or {}
+            
+            local buttonFrame = self:Create("Frame", {
+                Parent = tab.Container,
+                Size = UDim2.new(1, 0, 0, 48),
+                BackgroundColor3 = DeityFluent.CurrentTheme.Surface,
+                BackgroundTransparency = 0.9,
+                BorderSizePixel = 0
+            }, {
+                self:Create("UICorner", {CornerRadius = UDim.new(0, 8)}),
+                self:Create("UIStroke", {
+                    Color = DeityFluent.CurrentTheme.Border,
+                    Transparency = 0.5
+                })
+            })
+            
+            local title = self:Create("TextLabel", {
+                Parent = buttonFrame,
+                Text = options.title or "Button",
+                TextColor3 = DeityFluent.CurrentTheme.Text,
+                TextSize = 14,
+                Font = Enum.Font.Gotham,
+                Position = UDim2.new(0, 12, 0.5, 0),
+                AnchorPoint = Vector2.new(0, 0.5),
+                Size = UDim2.new(0.5, 0, 0, 20),
+                BackgroundTransparency = 1,
+                TextXAlignment = Enum.TextXAlignment.Left
+            })
+            
+            local description = nil
+            if options.description then
+                description = self:Create("TextLabel", {
+                    Parent = buttonFrame,
+                    Text = options.description,
+                    TextColor3 = DeityFluent.CurrentTheme.TextSecondary,
+                    TextSize = 11,
+                    Font = Enum.Font.Gotham,
+                    Position = UDim2.new(0, 12, 0.5, 10),
+                    AnchorPoint = Vector2.new(0, 0.5),
+                    Size = UDim2.new(0.5, 0, 0, 16),
+                    BackgroundTransparency = 1,
+                    TextXAlignment = Enum.TextXAlignment.Left
+                })
+                buttonFrame.Size = UDim2.new(1, 0, 0, 64)
+            end
+            
+            local button = self:Create("TextButton", {
+                Parent = buttonFrame,
+                Text = options.buttonText or "Click",
+                TextColor3 = DeityFluent.CurrentTheme.Text,
+                TextSize = 13,
+                Font = Enum.Font.Gotham,
+                Size = UDim2.new(0, 80, 0, 32),
+                Position = UDim2.new(1, -12, 0.5, 0),
+                AnchorPoint = Vector2.new(1, 0.5),
+                BackgroundColor3 = DeityFluent.CurrentTheme.Accent,
+                AutoButtonColor = false
+            }, {
+                self:Create("UICorner", {CornerRadius = UDim.new(0, 6)})
+            })
+            
+            self:Connect(button.Activated, function()
+                if options.callback then
+                    options.callback()
+                end
+                self:Tween(button, {BackgroundTransparency = 0.3}, 0.1, Enum.EasingStyle.Quad, Enum.EasingDirection.In)
+                wait(0.1)
+                self:Tween(button, {BackgroundTransparency = 0}, 0.1)
+            end)
+            
+            return buttonFrame
+        end
+        
+        function tab:AddToggle(options)
+            options = options or {}
+            
+            local toggleFrame = self:Create("Frame", {
+                Parent = tab.Container,
+                Size = UDim2.new(1, 0, 0, 48),
+                BackgroundColor3 = DeityFluent.CurrentTheme.Surface,
+                BackgroundTransparency = 0.9,
+                BorderSizePixel = 0
+            }, {
+                self:Create("UICorner", {CornerRadius = UDim.new(0, 8)}),
+                self:Create("UIStroke", {
+                    Color = DeityFluent.CurrentTheme.Border,
+                    Transparency = 0.5
+                })
+            })
+            
+            local title = self:Create("TextLabel", {
+                Parent = toggleFrame,
+                Text = options.title or "Toggle",
+                TextColor3 = DeityFluent.CurrentTheme.Text,
+                TextSize = 14,
+                Font = Enum.Font.Gotham,
+                Position = UDim2.new(0, 12, 0.5, 0),
+                AnchorPoint = Vector2.new(0, 0.5),
+                Size = UDim2.new(0.5, 0, 0, 20),
+                BackgroundTransparency = 1,
+                TextXAlignment = Enum.TextXAlignment.Left
+            })
+            
+            local toggleValue = options.default or false
+            
+            local toggleBtn = self:Create("TextButton", {
+                Parent = toggleFrame,
+                Text = "",
+                Size = UDim2.new(0, 40, 0, 20),
+                Position = UDim2.new(1, -12, 0.5, 0),
+                AnchorPoint = Vector2.new(1, 0.5),
+                BackgroundColor3 = toggleValue and DeityFluent.CurrentTheme.Accent or Color3.fromRGB(80, 80, 90),
+                AutoButtonColor = false
+            }, {
+                self:Create("UICorner", {CornerRadius = UDim.new(1, 0)})
+            })
+            
+            local toggleKnob = self:Create("Frame", {
+                Parent = toggleBtn,
+                Size = UDim2.new(0, 16, 0, 16),
+                Position = toggleValue and UDim2.new(1, -18, 0.5, 0) or UDim2.new(0, 2, 0.5, 0),
+                AnchorPoint = Vector2.new(0, 0.5),
+                BackgroundColor3 = Color3.fromRGB(255, 255, 255),
+                BorderSizePixel = 0
+            }, {
+                self:Create("UICorner", {CornerRadius = UDim.new(1, 0)})
+            })
+            
+            local function updateToggle(value)
+                toggleValue = value
+                self:Tween(toggleBtn, {BackgroundColor3 = toggleValue and DeityFluent.CurrentTheme.Accent or Color3.fromRGB(80, 80, 90)}, 0.2)
+                self:Tween(toggleKnob, {
+                    Position = toggleValue and UDim2.new(1, -18, 0.5, 0) or UDim2.new(0, 2, 0.5, 0)
+                }, 0.2)
+                
+                if options.callback then
+                    options.callback(toggleValue)
+                end
+                if options.flag then
+                    DeityFluent.Flags[options.flag] = toggleValue
+                end
+            end
+            
+            self:Connect(toggleBtn.Activated, function()
+                updateToggle(not toggleValue)
+            end)
+            
+            if options.flag then
+                DeityFluent.Flags[options.flag] = toggleValue
+            end
+            
+            return {
+                SetValue = updateToggle,
+                GetValue = function() return toggleValue end
+            }
+        end
+        
+        function tab:AddSlider(options)
+            options = options or {}
+            
+            local sliderFrame = self:Create("Frame", {
+                Parent = tab.Container,
+                Size = UDim2.new(1, 0, 0, 70),
+                BackgroundColor3 = DeityFluent.CurrentTheme.Surface,
+                BackgroundTransparency = 0.9,
+                BorderSizePixel = 0
+            }, {
+                self:Create("UICorner", {CornerRadius = UDim.new(0, 8)}),
+                self:Create("UIStroke", {
+                    Color = DeityFluent.CurrentTheme.Border,
+                    Transparency = 0.5
+                })
+            })
+            
+            local title = self:Create("TextLabel", {
+                Parent = sliderFrame,
+                Text = options.title or "Slider",
+                TextColor3 = DeityFluent.CurrentTheme.Text,
+                TextSize = 14,
+                Font = Enum.Font.Gotham,
+                Position = UDim2.new(0, 12, 0, 12),
+                Size = UDim2.new(1, -24, 0, 20),
+                BackgroundTransparency = 1,
+                TextXAlignment = Enum.TextXAlignment.Left
+            })
+            
+            local min = options.min or 0
+            local max = options.max or 100
+            local value = options.default or min
+            local decimal = options.decimal or 0
+            
+            local valueLabel = self:Create("TextLabel", {
+                Parent = sliderFrame,
+                Text = tostring(value),
+                TextColor3 = DeityFluent.CurrentTheme.Accent,
+                TextSize = 14,
+                Font = Enum.Font.GothamBold,
+                Position = UDim2.new(1, -12, 0, 12),
+                AnchorPoint = Vector2.new(1, 0),
+                Size = UDim2.new(0, 60, 0, 20),
+                BackgroundTransparency = 1,
+                TextXAlignment = Enum.TextXAlignment.Right
+            })
+            
+            local sliderBar = self:Create("Frame", {
+                Parent = sliderFrame,
+                Size = UDim2.new(1, -24, 0, 4),
+                Position = UDim2.new(0, 12, 0, 44),
+                BackgroundColor3 = Color3.fromRGB(60, 60, 70),
+                BorderSizePixel = 0
+            }, {
+                self:Create("UICorner", {CornerRadius = UDim.new(1, 0)})
+            })
+            
+            local sliderFill = self:Create("Frame", {
+                Parent = sliderBar,
+                Size = UDim2.new((value - min) / (max - min), 0, 1, 0),
+                BackgroundColor3 = DeityFluent.CurrentTheme.Accent,
+                BorderSizePixel = 0
+            }, {
+                self:Create("UICorner", {CornerRadius = UDim.new(1, 0)})
+            })
+            
+            local sliderKnob = self:Create("Frame", {
+                Parent = sliderBar,
+                Size = UDim2.new(0, 12, 0, 12),
+                Position = UDim2.new((value - min) / (max - min), -6, 0.5, -6),
+                AnchorPoint = Vector2.new(0, 0.5),
+                BackgroundColor3 = DeityFluent.CurrentTheme.Accent,
+                BorderSizePixel = 0
+            }, {
+                self:Create("UICorner", {CornerRadius = UDim.new(1, 0)})
+            })
+            
+            local function updateValue(newValue)
+                value = math.clamp(newValue, min, max)
+                if decimal > 0 then
+                    value = math.round(value / decimal) * decimal
+                end
+                local percent = (value - min) / (max - min)
+                
+                valueLabel.Text = tostring(value)
+                self:Tween(sliderFill, {Size = UDim2.new(percent, 0, 1, 0)}, 0.1)
+                self:Tween(sliderKnob, {Position = UDim2.new(percent, -6, 0.5, -6)}, 0.1)
+                
+                if options.callback then
+                    options.callback(value)
+                end
+                if options.flag then
+                    DeityFluent.Flags[options.flag] = value
+                end
+            end
+            
+            local dragging = false
+            self:Connect(sliderKnob.InputBegan, function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    dragging = true
+                end
+            end)
+            
+            self:Connect(UserInputService.InputEnded, function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    dragging = false
+                end
+            end)
+            
+            self:Connect(UserInputService.InputChanged, function(input)
+                if dragging and input.UserInputType == Enum.UserInputType.MouseMovement then
+                    local percent = (input.Position.X - sliderBar.AbsolutePosition.X) / sliderBar.AbsoluteSize.X
+                    local newValue = min + (max - min) * math.clamp(percent, 0, 1)
+                    updateValue(newValue)
+                end
+            end)
+            
+            if options.flag then
+                DeityFluent.Flags[options.flag] = value
+            end
+            
+            return {
+                SetValue = updateValue,
+                GetValue = function() return value end
+            }
+        end
+        
+        function tab:AddDropdown(options)
+            options = options or {}
+            
+            local dropdownFrame = self:Create("Frame", {
+                Parent = tab.Container,
+                Size = UDim2.new(1, 0, 0, 48),
+                BackgroundColor3 = DeityFluent.CurrentTheme.Surface,
+                BackgroundTransparency = 0.9,
+                BorderSizePixel = 0
+            }, {
+                self:Create("UICorner", {CornerRadius = UDim.new(0, 8)}),
+                self:Create("UIStroke", {
+                    Color = DeityFluent.CurrentTheme.Border,
+                    Transparency = 0.5
+                })
+            })
+            
+            local title = self:Create("TextLabel", {
+                Parent = dropdownFrame,
+                Text = options.title or "Dropdown",
+                TextColor3 = DeityFluent.CurrentTheme.Text,
+                TextSize = 14,
+                Font = Enum.Font.Gotham,
+                Position = UDim2.new(0, 12, 0.5, 0),
+                AnchorPoint = Vector2.new(0, 0.5),
+                Size = UDim2.new(0.5, 0, 0, 20),
+                BackgroundTransparency = 1,
+                TextXAlignment = Enum.TextXAlignment.Left
+            })
+            
+            local dropdownBtn = self:Create("TextButton", {
+                Parent = dropdownFrame,
+                Text = options.values and options.values[1] or "Select",
+                TextColor3 = DeityFluent.CurrentTheme.Text,
+                TextSize = 13,
+                Font = Enum.Font.Gotham,
+                Size = UDim2.new(0, 120, 0, 32),
+                Position = UDim2.new(1, -12, 0.5, 0),
+                AnchorPoint = Vector2.new(1, 0.5),
+                BackgroundColor3 = DeityFluent.CurrentTheme.Surface,
+                BackgroundTransparency = 0.5
+            }, {
+                self:Create("UICorner", {CornerRadius = UDim.new(0, 6)}),
+                self:Create("UIStroke", {
+                    Color = DeityFluent.CurrentTheme.Border,
+                    Transparency = 0.5
+                })
+            })
+            
+            local dropdownMenu = self:Create("Frame", {
+                Parent = screenGui,
+                Size = UDim2.new(0, 120, 0, 0),
+                BackgroundColor3 = DeityFluent.CurrentTheme.Surface,
+                Visible = false,
+                ZIndex = 10
+            }, {
+                self:Create("UICorner", {CornerRadius = UDim.new(0, 8)}),
+                self:Create("UIStroke", {
+                    Color = DeityFluent.CurrentTheme.Border,
+                    Transparency = 0.5
+                }),
+                self:Create("UIListLayout", {
+                    Padding = UDim.new(0, 2)
+                })
+            })
+            
+            local selectedValue = options.default or (options.values and options.values[1])
+            local values = options.values or {}
+            
+            for _, val in ipairs(values) do
+                local option = self:Create("TextButton", {
+                    Parent = dropdownMenu,
+                    Text = val,
+                    TextColor3 = DeityFluent.CurrentTheme.Text,
+                    TextSize = 13,
+                    Font = Enum.Font.Gotham,
+                    Size = UDim2.new(1, 0, 0, 32),
+                    BackgroundColor3 = DeityFluent.CurrentTheme.Surface,
+                    BackgroundTransparency = 0.9,
+                    AutoButtonColor = false
+                }, {
+                    self:Create("UICorner", {CornerRadius = UDim.new(0, 6)})
+                })
+                
+                self:Connect(option.Activated, function()
+                    selectedValue = val
+                    dropdownBtn.Text = val
+                    dropdownMenu.Visible = false
+                    
+                    if options.callback then
+                        options.callback(val)
+                    end
+                    if options.flag then
+                        DeityFluent.Flags[options.flag] = val
+                    end
+                end)
+                
+                dropdownMenu.Size = UDim2.new(0, 120, 0, dropdownMenu.UIListLayout.AbsoluteContentSize.Y + 4)
+            end
+            
+            local function updatePosition()
+                local pos = dropdownBtn.AbsolutePosition
+                dropdownMenu.Position = UDim2.new(0, pos.X + dropdownBtn.AbsoluteSize.X - 120, 0, pos.Y + dropdownBtn.AbsoluteSize.Y + 2)
+            end
+            
+            self:Connect(dropdownBtn.Activated, function()
+                dropdownMenu.Visible = not dropdownMenu.Visible
+                if dropdownMenu.Visible then
+                    updatePosition()
+                end
+            end)
+            
+            self:Connect(UserInputService.InputBegan, function(input)
+                if input.UserInputType == Enum.UserInputType.MouseButton1 then
+                    if dropdownMenu.Visible and not dropdownBtn:IsHovering() and not dropdownMenu:IsHovering() then
+                        dropdownMenu.Visible = false
+                    end
+                end
+            end)
+            
+            if options.flag then
+                DeityFluent.Flags[options.flag] = selectedValue
+            end
+            
+            return {
+                SetValue = function(val)
+                    selectedValue = val
+                    dropdownBtn.Text = val
+                    if options.callback then
+                        options.callback(val)
+                    end
+                end,
+                GetValue = function() return selectedValue end
+            }
+        end
+        
+        return tab
+    end
+    
+    table.insert(DeityFluent.Windows, window)
+    return window
+end
+
+-- Notification system
+function DeityFluent:Notify(options)
+    options = options or {}
+    
+    local notificationHolder = nil
+    for _, win in ipairs(self.Windows) do
+        if win.Visible then
+            -- Find notification holder in window
+        end
+    end
+    
+    -- Create notification
+    local screenGui = CoreGui:FindFirstChild("DeityFluent")
+    if not screenGui then return end
+    
+    local notification = self:Create("Frame", {
+        Parent = screenGui,
+        Size = UDim2.new(0, 300, 0, 60),
+        Position = UDim2.new(1, -20, 1, -80),
+        AnchorPoint = Vector2.new(1, 1),
+        BackgroundColor3 = self.CurrentTheme.Surface,
+        BackgroundTransparency = 0.1
+    }, {
+        self:Create("UICorner", {CornerRadius = UDim.new(0, 8)}),
+        self:Create("UIStroke", {
+            Color = self.CurrentTheme.Accent,
+            Transparency = 0.5
+        })
+    })
+    
+    local title = self:Create("TextLabel", {
+        Parent = notification,
+        Text = options.title or "Notification",
+        TextColor3 = self.CurrentTheme.Text,
+        TextSize = 14,
+        Font = Enum.Font.GothamBold,
+        Position = UDim2.new(0, 12, 0, 8),
+        Size = UDim2.new(1, -24, 0, 20),
+        BackgroundTransparency = 1,
+        TextXAlignment = Enum.TextXAlignment.Left
+    })
+    
+    local content = self:Create("TextLabel", {
+        Parent = notification,
+        Text = options.content or "",
+        TextColor3 = self.CurrentTheme.TextSecondary,
+        TextSize = 12,
+        Font = Enum.Font.Gotham,
+        Position = UDim2.new(0, 12, 0, 28),
+        Size = UDim2.new(1, -24, 0, 20),
+        BackgroundTransparency = 1,
+        TextXAlignment = Enum.TextXAlignment.Left
+    })
+    
+    self:Tween(notification, {Position = UDim2.new(1, -20, 1, -20)}, 0.3)
+    
+    wait(options.duration or 3)
+    
+    self:Tween(notification, {Position = UDim2.new(1, -20, 1, -80), BackgroundTransparency = 1}, 0.3)
+    wait(0.3)
+    notification:Destroy()
+end
+
+-- Change theme
+function DeityFluent:SetTheme(themeName)
+    if self.Themes[themeName] then
+        self.CurrentTheme = self.Themes[themeName]
+        -- Refresh all windows (implement refresh logic)
+    end
+end
+
+return DeityFluent
